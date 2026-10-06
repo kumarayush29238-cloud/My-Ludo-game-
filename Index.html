@@ -1,1 +1,734 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Ludo King</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#4b0082,#ff416c);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.game{
+    width:430px;
+    max-width:96vw;
+    background:#ffffff;
+    padding:15px;
+    border-radius:25px;
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+h1{
+    text-align:center;
+    margin:0 0 5px;
+    color:#333;
+}
+
+#turn{
+    text-align:center;
+    font-size:19px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.board{
+    position:relative;
+    width:100%;
+    aspect-ratio:1;
+    background:white;
+    border:5px solid #222;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+/* HOME */
+
+.home{
+    position:absolute;
+    width:40%;
+    height:40%;
+    padding:7%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12%;
+}
+
+.redHome{
+    top:0;
+    left:0;
+    background:#e53935;
+}
+
+.greenHome{
+    top:0;
+    right:0;
+    background:#43a047;
+}
+
+.yellowHome{
+    bottom:0;
+    left:0;
+    background:#fbc02d;
+}
+
+.blueHome{
+    bottom:0;
+    right:0;
+    background:#1e88e5;
+}
+
+.base{
+    background:white;
+    border:3px solid #333;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* CENTER */
+
+.center{
+    position:absolute;
+    width:20%;
+    height:20%;
+    top:40%;
+    left:40%;
+    background:conic-gradient(
+        #43a047 0 25%,
+        #1e88e5 25% 50%,
+        #fbc02d 50% 75%,
+        #e53935 75% 100%
+    );
+    border:3px solid #222;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+}
+
+/* PATH */
+
+.path{
+    position:absolute;
+    top:30%;
+    left:30%;
+    width:40%;
+    height:40%;
+    background:
+    repeating-linear-gradient(
+        90deg,
+        #fff 0,
+        #fff 16%,
+        #ddd 17%,
+        #fff 18%
+    );
+    border:2px solid #555;
+}
+
+/* TOKENS */
+
+.token{
+    position:absolute;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    border:3px solid white;
+    box-shadow:0 3px 7px #333;
+    z-index:20;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.token:hover{
+    transform:scale(1.2);
+}
+
+.red{
+    background:#e53935;
+}
+
+.green{
+    background:#43a047;
+}
+
+.yellow{
+    background:#fbc02d;
+}
+
+.blue{
+    background:#1e88e5;
+}
+
+/* CONTROLS */
+
+.controls{
+    margin-top:12px;
+    text-align:center;
+}
+
+#dice{
+    font-size:58px;
+    height:70px;
+}
+
+#roll{
+    background:#222;
+    color:white;
+    border:0;
+    padding:13px 35px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#roll:disabled{
+    background:#999;
+}
+
+#message{
+    margin:10px;
+    min-height:22px;
+    font-weight:bold;
+}
+
+#newGame{
+    border:0;
+    padding:9px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#eee;
+}
+
+.score{
+    display:flex;
+    justify-content:space-around;
+    margin-top:8px;
+    font-size:13px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<h1>🎲 LUDO KING</h1>
+
+<div id="turn">🔴 Red's Turn</div>
+
+<div class="board" id="board">
+
+    <div class="path"></div>
+
+    <div class="home redHome">
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+    </div>
+
+    <div class="home greenHome">
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+    </div>
+
+    <div class="home yellowHome">
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+    </div>
+
+    <div class="home blueHome">
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+        <div class="base"></div>
+    </div>
+
+    <div class="center">🏆</div>
+
+</div>
+
+<div class="controls">
+
+    <div id="dice">🎲</div>
+
+    <button id="roll" onclick="rollDice()">
+        ROLL DICE
+    </button>
+
+    <div id="message">
+        Roll the dice to start!
+    </div>
+
+    <button id="newGame" onclick="newGame()">
+        🔄 New Game
+    </button>
+
+</div>
+
+<div class="score">
+    <span>🔴 Red</span>
+    <span>🟢 Green</span>
+    <span>🟡 Yellow</span>
+    <span>🔵 Blue</span>
+</div>
+
+</div>
+
+<script>
+
+const players=[
+    {
+        name:"Red",
+        emoji:"🔴",
+        color:"red",
+        start:0
+    },
+    {
+        name:"Green",
+        emoji:"🟢",
+        color:"green",
+        start:13
+    },
+    {
+        name:"Yellow",
+        emoji:"🟡",
+        color:"yellow",
+        start:26
+    },
+    {
+        name:"Blue",
+        emoji:"🔵",
+        color:"blue",
+        start:39
+    }
+];
+
+let currentPlayer=0;
+let dice=0;
+let selecting=false;
+let gameOver=false;
+
+let tokens=[];
+
+for(let p=0;p<4;p++){
+
+    tokens[p]=[];
+
+    for(let t=0;t<4;t++){
+
+        tokens[p].push({
+            pos:-1
+        });
+
+    }
+}
+
+
+/* DICE */
+
+const diceFaces=[
+    "🎲",
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
+];
+
+
+function rollDice(){
+
+    if(selecting || gameOver) return;
+
+    dice=Math.floor(Math.random()*6)+1;
+
+    document.getElementById("dice").innerText=
+        diceFaces[dice];
+
+    let movable=getMovable();
+
+    if(movable.length===0){
+
+        document.getElementById("message").innerText=
+            players[currentPlayer].name+
+            " cannot move.";
+
+        setTimeout(nextTurn,1000);
+
+        return;
+    }
+
+    selecting=true;
+
+    document.getElementById("roll").disabled=true;
+
+    document.getElementById("message").innerText=
+        players[currentPlayer].name+
+        " : Select your token 🎯";
+}
+
+
+/* MOVABLE TOKENS */
+
+function getMovable(){
+
+    let list=[];
+
+    for(let i=0;i<4;i++){
+
+        let pos=tokens[currentPlayer][i].pos;
+
+        if(pos===-1){
+
+            if(dice===6)
+                list.push(i);
+
+        }else{
+
+            if(pos+dice<=57)
+                list.push(i);
+
+        }
+    }
+
+    return list;
+}
+
+
+/* TOKEN CLICK */
+
+function tokenClick(player,index){
+
+    if(!selecting) return;
+
+    if(player!==currentPlayer) return;
+
+    let token=tokens[player][index];
+
+    if(token.pos===-1){
+
+        if(dice!==6) return;
+
+        token.pos=0;
+
+    }else{
+
+        if(token.pos+dice>57) return;
+
+        token.pos+=dice;
+
+    }
+
+    selecting=false;
+
+    cutTokens(player,index);
+
+    drawTokens();
+
+    if(checkWinner(player)){
+
+        gameOver=true;
+
+        document.getElementById("message").innerText=
+            "🏆 "+players[player].name+
+            " WINS THE GAME!";
+
+        document.getElementById("roll").disabled=true;
+
+        return;
+    }
+
+    if(dice===6){
+
+        document.getElementById("message").innerText=
+            "🎉 "+players[player].name+
+            " gets another turn!";
+
+        document.getElementById("roll").disabled=false;
+
+    }else{
+
+        nextTurn();
+
+    }
+
+}
+
+
+/* CUT */
+
+function cutTokens(player,index){
+
+    let token=tokens[player][index];
+
+    if(token.pos<0 || token.pos>51)
+        return;
+
+    let global=
+        (players[player].start+
+        token.pos)%52;
+
+    const safe=[
+        0,8,13,21,
+        26,34,39,47
+    ];
+
+    if(safe.includes(global))
+        return;
+
+    for(let p=0;p<4;p++){
+
+        if(p===player) continue;
+
+        for(let t=0;t<4;t++){
+
+            let enemy=tokens[p][t];
+
+            if(enemy.pos>=0 && enemy.pos<=51){
+
+                let enemyGlobal=
+                    (players[p].start+
+                    enemy.pos)%52;
+
+                if(enemyGlobal===global){
+
+                    enemy.pos=-1;
+
+                    document.getElementById("message").innerText=
+                        "💥 "+players[player].name+
+                        " cut a token!";
+
+                }
+            }
+        }
+    }
+}
+
+
+/* WINNER */
+
+function checkWinner(player){
+
+    for(let i=0;i<4;i++){
+
+        if(tokens[player][i].pos!==57)
+            return false;
+
+    }
+
+    return true;
+}
+
+
+/* NEXT TURN */
+
+function nextTurn(){
+
+    currentPlayer++;
+
+    if(currentPlayer>=4)
+        currentPlayer=0;
+
+    selecting=false;
+
+    document.getElementById("roll").disabled=false;
+
+    document.getElementById("turn").innerText=
+        players[currentPlayer].emoji+
+        " "+players[currentPlayer].name+
+        "'s Turn";
+
+    document.getElementById("message").innerText=
+        "Roll the dice 🎲";
+}
+
+
+/* TOKEN POSITION */
+
+function getPosition(player,token,index){
+
+    if(token.pos===-1){
+
+        const homePositions=[
+
+            [
+                [10,10],
+                [19,10],
+                [10,19],
+                [19,19]
+            ],
+
+            [
+                [81,10],
+                [90,10],
+                [81,19],
+                [90,19]
+            ],
+
+            [
+                [10,81],
+                [19,81],
+                [10,90],
+                [19,90]
+            ],
+
+            [
+                [81,81],
+                [90,81],
+                [81,90],
+                [90,90]
+            ]
+
+        ];
+
+        return homePositions[player][index];
+    }
+
+
+    if(token.pos<=51){
+
+        let global=
+            (players[player].start+
+            token.pos)%52;
+
+        let angle=
+            (global/52)*Math.PI*2-
+            Math.PI/2;
+
+        let radius=34;
+
+        let x=
+            50+Math.cos(angle)*radius;
+
+        let y=
+            50+Math.sin(angle)*radius;
+
+        return [x,y];
+    }
+
+
+    let step=token.pos-52;
+
+    let angles=[
+        -90,
+        0,
+        90,
+        180
+    ];
+
+    let angle=
+        angles[player]*Math.PI/180;
+
+    let distance=
+        5+step*4;
+
+    return[
+        50+Math.cos(angle)*distance,
+        50+Math.sin(angle)*distance
+    ];
+}
+
+
+/* DRAW TOKENS */
+
+function drawTokens(){
+
+    document
+        .querySelectorAll(".token")
+        .forEach(x=>x.remove());
+
+    for(let p=0;p<4;p++){
+
+        for(let t=0;t<4;t++){
+
+            let element=
+                document.createElement("div");
+
+            element.className=
+                "token "+players[p].color;
+
+            let pos=
+                getPosition(
+                    p,
+                    tokens[p][t],
+                    t
+                );
+
+            element.style.left=
+                "calc("+pos[0]+"% - 15px)";
+
+            element.style.top=
+                "calc("+pos[1]+"% - 15px)";
+
+            element.onclick=()=>{
+                tokenClick(p,t);
+            };
+
+            document
+                .getElementById("board")
+                .appendChild(element);
+        }
+    }
+}
+
+
+/* NEW GAME */
+
+function newGame(){
+
+    currentPlayer=0;
+    dice=0;
+    selecting=false;
+    gameOver=false;
+
+    for(let p=0;p<4;p++){
+
+        for(let t=0;t<4;t++){
+
+            tokens[p][t].pos=-1;
+
+        }
+    }
+
+    document.getElementById("dice").innerText="🎲";
+
+    document.getElementById("roll").disabled=false;
+
+    document.getElementById("turn").innerText=
+        "🔴 Red's Turn";
+
+    document.getElementById("message").innerText=
+        "Roll the dice to start!";
+
+    drawTokens();
+}
+
+
+/* START */
+
+drawTokens();
+
+</script>
+
+</body>
+  </html>
